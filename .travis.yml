@@ -1,7 +1,18 @@
+arch: 
+    - arm64
+    - amd64
+before_install:    
+    - sudo apt-get -y install maven
+
+install:
+  - if [ "${TRAVIS_CPU_ARCH}" == "arm64" ]; then
+     sudo apt-get install openjdk-8-jdk;
+     export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-arm64/;
+     export PATH=$JAVA_HOME:$PATH;
+   fi
+# Skip install phase to avoid unwanted mvn build
 language: java
 dist: trusty
-# Skip install phase to avoid unwanted mvn build
-install: skip
 # Run maven build in quiet mode to avoid log file limit in Travis CI.
 # Only errors and Maven version information will be printed in the CI logs.
 script: mvn clean install -B -V | grep -e "\[ERROR\]" -e Maven -e "// Start Running" -e "Building"; test ${PIPESTATUS[0]} -eq 0;
